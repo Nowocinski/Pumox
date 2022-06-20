@@ -33,9 +33,14 @@ namespace PumoxWebApplication.Repositories
                 .FirstOrDefaultAsync(filter);
         }
 
-        public void UpdateAsync(Company company)
+        public void Update(Company company)
         {
             _context.Companies.Update(company);
+        }
+
+        public void Delete(Company company)
+        {
+            _context.Companies.Remove(company);
         }
 
         public async Task SaveChangesAsync()

@@ -134,7 +134,22 @@ namespace PumoxWebApplication.Controllers
                 JobTitle = employee.JobTitle
             }).ToList();
 
-            _companyRepository.UpdateAsync(company);
+            _companyRepository.Update(company);
+            await _companyRepository.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> DeleteCompany(long id)
+        {
+            // TODO: Dodać walidację
+            var company = await _companyRepository.GetSingleAsync(company => company.Id == id);
+            if (company == null)
+            {
+                return NotFound($"No company found with id: {id}");
+            }
+
+            _companyRepository.Delete(company);
             await _companyRepository.SaveChangesAsync();
             return NoContent();
         }
