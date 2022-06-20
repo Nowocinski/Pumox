@@ -4,7 +4,7 @@
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public string EstablishmentYear { get; set; }
-        public IEnumerable<Employee> Employees { get; set; }
+        public int EstablishmentYear { get; set; }
+        public ICollection<Employee> Employees { get; set; }
     }
 }

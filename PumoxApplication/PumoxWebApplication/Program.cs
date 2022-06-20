@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PumoxWebApplication.Context;
+using PumoxWebApplication.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddDbContext<DataBaseContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DevConnection"));
