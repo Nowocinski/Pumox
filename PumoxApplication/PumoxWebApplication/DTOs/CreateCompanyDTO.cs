@@ -1,6 +1,6 @@
 ﻿namespace PumoxWebApplication.DTOs
 {
-    public class CreateCompanyDTO
+    public class CompanyDTO
     {
         public string Name { get; set; }
         public int EstablishmentYear { get; set; }

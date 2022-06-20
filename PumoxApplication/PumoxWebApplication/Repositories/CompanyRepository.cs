@@ -26,6 +26,18 @@ namespace PumoxWebApplication.Repositories
                 .ToListAsync();
         }
 
+        public async Task<Company> GetSingleAsync(Expression<Func<Company, bool>> filter = null)
+        {
+            return await _context.Companies
+                .Include(column => column.Employees)
+                .FirstOrDefaultAsync(filter);
+        }
+
+        public void UpdateAsync(Company company)
+        {
+            _context.Companies.Update(company);
+        }
+
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();

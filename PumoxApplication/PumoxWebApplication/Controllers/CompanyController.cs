@@ -20,7 +20,7 @@ namespace PumoxWebApplication.Controllers
         }
 
         [HttpPost("Create")]
-        public async Task<object> CreateCompany(CreateCompanyDTO createCompanyDTO)
+        public async Task<object> CreateCompany(CompanyDTO createCompanyDTO)
         {
             // TODO: Dodać walidacje
             Company company = new Company
@@ -45,7 +45,7 @@ namespace PumoxWebApplication.Controllers
         }
 
         [HttpPost("Search")]
-        public async Task<object> Search(SearchRequestDTO searchRequestDTO)
+        public async Task<object> SearchCompany(SearchRequestDTO searchRequestDTO)
         {
             // TODO: Dodać walidację
             // TODO: Spróbować uprościć filtrowanie
@@ -113,6 +113,31 @@ namespace PumoxWebApplication.Controllers
                     })
                 })
             };
+        }
+
+        [HttpPut("Update/{id}")]
+        public async Task<IActionResult> UpdateCompany(long id, CompanyDTO companyDTO)
+        {
+            // TODO: Dodać walidację
+            var company = await _companyRepository.GetSingleAsync(company => company.Id == id);
+            if (company == null)
+            {
+                return NotFound($"No company found with id: {id}");
+            }
+
+            company.Name = companyDTO.Name;
+            company.EstablishmentYear = companyDTO.EstablishmentYear;
+            company.Employees = companyDTO.Employees.Select(employee => new Employee
+            {
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                DateOfBirth = employee.DateOfBirth,
+                JobTitle = employee.JobTitle
+            }).ToList();
+
+            _companyRepository.UpdateAsync(company);
+            await _companyRepository.SaveChangesAsync();
+            return NoContent();
         }
     }
 }
