@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PumoxWebApplication.DTOs;
 using PumoxWebApplication.Models;
-using PumoxWebApplication.Models.Enumes;
 using PumoxWebApplication.Repositories;
 
 namespace PumoxWebApplication.Controllers
@@ -10,10 +9,10 @@ namespace PumoxWebApplication.Controllers
     [Route("[controller]")]
     public class CompanyController : ControllerBase
     {
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<CompanyController> _logger;
         private readonly ICompanyRepository _companyRepository;
 
-        public CompanyController(ILogger<WeatherForecastController> logger, ICompanyRepository companyRepository)
+        public CompanyController(ILogger<CompanyController> logger, ICompanyRepository companyRepository)
         {
             _logger = logger;
             _companyRepository = companyRepository;
