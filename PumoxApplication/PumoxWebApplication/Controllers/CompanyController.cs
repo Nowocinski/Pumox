@@ -32,8 +32,8 @@ namespace PumoxWebApplication.Controllers
                     FirstName = employee.FirstName,
                     LastName = employee.LastName,
                     DateOfBirth = employee.DateOfBirth,
-                    // TODO: Do poprawienia
-                    JobTitle = JobTitle.Other
+                    // TODO: Do poprawienia - w pdf jest podany string
+                    JobTitle = employee.JobTitle
                 }).ToList()
             };
             await _companyRepository.CreateAsync(company);
