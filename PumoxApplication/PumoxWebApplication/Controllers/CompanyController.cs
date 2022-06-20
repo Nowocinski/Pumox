@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PumoxWebApplication.DTOs;
 using PumoxWebApplication.Models;
 using PumoxWebApplication.Repositories;
@@ -19,6 +20,7 @@ namespace PumoxWebApplication.Controllers
         }
 
         [HttpPost("Create")]
+        [Authorize]
         public async Task<object> CreateCompany(CompanyDTO createCompanyDTO)
         {
             // TODO: Dodać walidacje
@@ -115,6 +117,7 @@ namespace PumoxWebApplication.Controllers
         }
 
         [HttpPut("Update/{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateCompany(long id, CompanyDTO companyDTO)
         {
             // TODO: Dodać walidację
@@ -140,6 +143,7 @@ namespace PumoxWebApplication.Controllers
         }
 
         [HttpDelete("Delete/{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteCompany(long id)
         {
             // TODO: Dodać walidację
