@@ -10,5 +10,6 @@ namespace PumoxWebApplication.Models
         public DateTime DateOfBirth { get; set; }
         public JobTitle JobTitle { get; set; }
         public Company Company { get; set; }
+        public long Company_Id { get; set; }
     }
 }
