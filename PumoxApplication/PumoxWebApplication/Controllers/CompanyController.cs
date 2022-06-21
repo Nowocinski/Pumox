@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PumoxWebApplication.DTOs;
@@ -14,14 +15,14 @@ namespace PumoxWebApplication.Controllers
         private readonly ILogger<CompanyController> _logger;
         private readonly ICompanyRepository _companyRepository;
         private readonly IValidator<CompanyDTO> _companyDTOvalidator;
-        private readonly IValidator<EmployeeDTO> _employeeDTOvalidator;
+        private readonly IMapper _mapper;
 
-        public CompanyController(ILogger<CompanyController> logger, ICompanyRepository companyRepository, IValidator<CompanyDTO> companyDTOvalidator, IValidator<EmployeeDTO> employeeDTOvalidator)
+        public CompanyController(ILogger<CompanyController> logger, ICompanyRepository companyRepository, IValidator<CompanyDTO> companyDTOvalidator, IMapper mapper)
         {
             _logger = logger;
             _companyRepository = companyRepository;
             _companyDTOvalidator = companyDTOvalidator;
-            _employeeDTOvalidator = employeeDTOvalidator;
+            _mapper = mapper;
         }
 
         [HttpPost("Create")]
@@ -34,19 +35,8 @@ namespace PumoxWebApplication.Controllers
                 return BadRequest(validationResult.Errors.First().ErrorMessage);
             }
 
-            Company company = new Company
-            {
-                Name = createCompanyDTO.Name,
-                EstablishmentYear = createCompanyDTO.EstablishmentYear,
-                Employees = createCompanyDTO?.Employees.Select(employee => new Employee
-                {
-                    FirstName = employee.FirstName,
-                    LastName = employee.LastName,
-                    DateOfBirth = employee.DateOfBirth,
-                    // TODO: Do poprawienia - w pdf jest podany string
-                    JobTitle = employee.JobTitle
-                }).ToList()
-            };
+            var company = _mapper.Map<Company>(createCompanyDTO);
+
             await _companyRepository.CreateAsync(company);
             await _companyRepository.SaveChangesAsync();
             return new

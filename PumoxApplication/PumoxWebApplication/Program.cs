@@ -1,8 +1,10 @@
+using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PumoxWebApplication.AutoMapper;
 using PumoxWebApplication.Context;
 using PumoxWebApplication.DTOs;
 using PumoxWebApplication.Repositories;
@@ -28,6 +30,13 @@ builder.Services.AddSwaggerGen(options => {
 
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
+
+var mappingConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new MappingProfile());
+});
+IMapper mapper = mappingConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<IJwtHandler, JwtHandler>();
