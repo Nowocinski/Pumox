@@ -4,6 +4,6 @@
     {
         public string Name { get; set; }
         public int EstablishmentYear { get; set; }
-        public IEnumerable<EmployeesDTO> Employees { get; set; }
+        public IEnumerable<EmployeeDTO> Employees { get; set; }
     }
 }

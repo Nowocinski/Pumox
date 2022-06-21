@@ -4,6 +4,6 @@
     {
         public string Name { get; set; }
         public int EstablishmentYear { get; set; }
-        public List<EmployeesDTO> Employees { get; set; }
+        public List<EmployeeDTO> Employees { get; set; }
     }
 }

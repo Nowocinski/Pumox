@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PumoxWebApplication.DTOs;
 using PumoxWebApplication.Models;
@@ -12,18 +13,27 @@ namespace PumoxWebApplication.Controllers
     {
         private readonly ILogger<CompanyController> _logger;
         private readonly ICompanyRepository _companyRepository;
+        private readonly IValidator<CompanyDTO> _companyDTOvalidator;
+        private readonly IValidator<EmployeeDTO> _employeeDTOvalidator;
 
-        public CompanyController(ILogger<CompanyController> logger, ICompanyRepository companyRepository)
+        public CompanyController(ILogger<CompanyController> logger, ICompanyRepository companyRepository, IValidator<CompanyDTO> companyDTOvalidator, IValidator<EmployeeDTO> employeeDTOvalidator)
         {
             _logger = logger;
             _companyRepository = companyRepository;
+            _companyDTOvalidator = companyDTOvalidator;
+            _employeeDTOvalidator = employeeDTOvalidator;
         }
 
         [HttpPost("Create")]
         [Authorize]
         public async Task<object> CreateCompany(CompanyDTO createCompanyDTO)
         {
-            // TODO: Dodać walidacje
+            var validationResult = await _companyDTOvalidator.ValidateAsync(createCompanyDTO);
+            if (validationResult.Errors.Any())
+            {
+                return BadRequest(validationResult.Errors.First().ErrorMessage);
+            }
+
             Company company = new Company
             {
                 Name = createCompanyDTO.Name,
@@ -105,7 +115,7 @@ namespace PumoxWebApplication.Controllers
                 {
                     Name = company.Name,
                     EstablishmentYear = company.EstablishmentYear,
-                    Employees = company.Employees.Select(employee => new EmployeesDTO
+                    Employees = company.Employees.Select(employee => new EmployeeDTO
                     {
                         FirstName = employee.FirstName,
                         LastName = employee.LastName,

@@ -1,9 +1,12 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PumoxWebApplication.Context;
+using PumoxWebApplication.DTOs;
 using PumoxWebApplication.Repositories;
+using PumoxWebApplication.Validators;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 
@@ -28,6 +31,8 @@ builder.Services.AddSwaggerGen(options => {
 
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<IJwtHandler, JwtHandler>();
+builder.Services.AddScoped<IValidator<CompanyDTO>, CompanyDTOValidator>();
+builder.Services.AddScoped<IValidator<EmployeeDTO>, EmployeeDTOValidator>();
 builder.Services.AddDbContext<DataBaseContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DevConnection"));
