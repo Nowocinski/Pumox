@@ -58,7 +58,6 @@ namespace PumoxWebApplication.Controllers
         [HttpPost("Search")]
         public async Task<object> SearchCompany(SearchRequestDTO searchRequestDTO)
         {
-            // TODO: Dodać walidację
             // TODO: Spróbować uprościć filtrowanie
             IEnumerable<Company> companies;
             if (!string.IsNullOrEmpty(searchRequestDTO.Keyword))
@@ -130,7 +129,12 @@ namespace PumoxWebApplication.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateCompany(long id, CompanyDTO companyDTO)
         {
-            // TODO: Dodać walidację
+            var validationResult = await _companyDTOvalidator.ValidateAsync(companyDTO);
+            if (validationResult.Errors.Any())
+            {
+                return BadRequest(validationResult.Errors.First().ErrorMessage);
+            }
+
             var company = await _companyRepository.GetSingleAsync(company => company.Id == id);
             if (company == null)
             {
@@ -156,7 +160,6 @@ namespace PumoxWebApplication.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteCompany(long id)
         {
-            // TODO: Dodać walidację
             var company = await _companyRepository.GetSingleAsync(company => company.Id == id);
             if (company == null)
             {
