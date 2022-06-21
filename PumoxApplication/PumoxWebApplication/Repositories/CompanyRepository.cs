@@ -18,10 +18,17 @@ namespace PumoxWebApplication.Repositories
             await _context.AddAsync(company);
         }
 
-        public async Task<IEnumerable<Company>> GetAsync(Expression<Func<Company, bool>> filter = null)
+        public async Task<IEnumerable<Company>> GetAsync(Expression<Func<Company, bool>> filter)
         {
             return await _context.Companies
                 .Where(filter)
+                .Include(column => column.Employees)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Company>> GetAsync()
+        {
+            return await _context.Companies
                 .Include(column => column.Employees)
                 .ToListAsync();
         }

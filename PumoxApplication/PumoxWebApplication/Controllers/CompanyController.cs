@@ -59,7 +59,6 @@ namespace PumoxWebApplication.Controllers
             else
             {
                 companies = await _companyRepository.GetAsync();
-
             }
 
             if (searchRequestDTO.EmployeeDateOfBirthFrom != null)
@@ -100,18 +99,7 @@ namespace PumoxWebApplication.Controllers
 
             return new
             {
-                Results = companies.Select(company => new SearchResponseDTO
-                {
-                    Name = company.Name,
-                    EstablishmentYear = company.EstablishmentYear,
-                    Employees = company.Employees.Select(employee => new EmployeeDTO
-                    {
-                        FirstName = employee.FirstName,
-                        LastName = employee.LastName,
-                        DateOfBirth = employee.DateOfBirth,
-                        JobTitle = employee.JobTitle
-                    })
-                })
+                Results = _mapper.Map<IEnumerable<Company>, IEnumerable<CompanyDTO>>(companies)
             };
         }
 
