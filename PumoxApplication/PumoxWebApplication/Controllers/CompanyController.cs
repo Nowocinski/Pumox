@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PumoxWebApplication.DTOs;
 using PumoxWebApplication.Models;
+using PumoxWebApplication.Models.Enumes;
 using PumoxWebApplication.Repositories;
 
 namespace PumoxWebApplication.Controllers
@@ -48,7 +49,6 @@ namespace PumoxWebApplication.Controllers
         [HttpPost("Search")]
         public async Task<object> SearchCompany(SearchRequestDTO searchRequestDTO)
         {
-            // TODO: Spróbować uprościć filtrowanie
             IEnumerable<Company> companies;
             if (!string.IsNullOrEmpty(searchRequestDTO.Keyword))
             {
@@ -61,41 +61,9 @@ namespace PumoxWebApplication.Controllers
                 companies = await _companyRepository.GetAsync();
             }
 
-            if (searchRequestDTO.EmployeeDateOfBirthFrom != null)
-            {
-                companies.ToList()
-                    .ForEach(company => company.Employees.ToList().ForEach(employee =>
-                    {
-                        if (employee.DateOfBirth < searchRequestDTO.EmployeeDateOfBirthFrom)
-                        {
-                            company.Employees.Remove(employee);
-                        }
-                    }));
-            }
-
-            if (searchRequestDTO.EmployeeDateOfBirthTo != null)
-            {
-                companies.ToList()
-                    .ForEach(company => company.Employees.ToList().ForEach(employee =>
-                    {
-                        if (employee.DateOfBirth > searchRequestDTO.EmployeeDateOfBirthTo)
-                        {
-                            company.Employees.Remove(employee);
-                        }
-                    }));
-            }
-
-            if (searchRequestDTO.EmployeeJobTitles != null)
-            {
-                companies.ToList()
-                    .ForEach(company => company.Employees.ToList().ForEach(employee =>
-                    {
-                        if (!searchRequestDTO.EmployeeJobTitles.Any(jobTitle => jobTitle == employee.JobTitle))
-                        {
-                            company.Employees.Remove(employee);
-                        }
-                    }));
-            }
+            this.FilterEmployeesWithDateOfBirthFrom(ref companies, searchRequestDTO.EmployeeDateOfBirthFrom);
+            this.FilterEmployeesWithDateOfBirthTo(ref companies, searchRequestDTO.EmployeeDateOfBirthTo);
+            this.FilterEmployeesJobTitles(ref companies, searchRequestDTO.EmployeeJobTitles);
 
             return new
             {
@@ -138,6 +106,51 @@ namespace PumoxWebApplication.Controllers
             _companyRepository.Delete(company);
             await _companyRepository.SaveChangesAsync();
             return NoContent();
+        }
+
+        private void FilterEmployeesWithDateOfBirthFrom(ref IEnumerable<Company> companies, DateTime? date)
+        {
+            if (date != null)
+            {
+                companies.ToList()
+                    .ForEach(company => company.Employees.ToList().ForEach(employee =>
+                    {
+                        if (employee.DateOfBirth < date)
+                        {
+                            company.Employees.Remove(employee);
+                        }
+                    }));
+            }
+        }
+
+        private void FilterEmployeesWithDateOfBirthTo(ref IEnumerable<Company> companies, DateTime? date)
+        {
+            if (date != null)
+            {
+                companies.ToList()
+                    .ForEach(company => company.Employees.ToList().ForEach(employee =>
+                    {
+                        if (employee.DateOfBirth > date)
+                        {
+                            company.Employees.Remove(employee);
+                        }
+                    }));
+            }
+        }
+
+        private void FilterEmployeesJobTitles(ref IEnumerable<Company> companies, IEnumerable<JobTitle> jobTitles)
+        {
+            if (jobTitles != null && jobTitles.Any())
+            {
+                companies.ToList()
+                    .ForEach(company => company.Employees.ToList().ForEach(employee =>
+                    {
+                        if (!jobTitles.Any(jobTitle => jobTitle == employee.JobTitle))
+                        {
+                            company.Employees.Remove(employee);
+                        }
+                    }));
+            }
         }
     }
 }
