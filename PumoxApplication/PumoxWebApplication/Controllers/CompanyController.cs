@@ -49,16 +49,17 @@ namespace PumoxWebApplication.Controllers
         [HttpPost("Search")]
         public async Task<object> SearchCompany(SearchRequestDTO searchRequestDTO)
         {
-            IEnumerable<Company> companies;
+            IQueryable<Company> companies;
             if (!string.IsNullOrEmpty(searchRequestDTO.Keyword))
             {
-                companies = await _companyRepository
+                companies = _companyRepository
                 .GetAsync(company => company.Name.ToLower().Contains(searchRequestDTO.Keyword.ToLower())
-                || company.Employees.Any(employee => employee.FirstName.ToLower().Contains(searchRequestDTO.Keyword.ToLower()) || employee.LastName.ToLower().Contains(searchRequestDTO.Keyword.ToLower())));
+                || company.Employees.Any(employee => employee.FirstName.ToLower().Contains(searchRequestDTO.Keyword.ToLower()) || employee.LastName.ToLower().Contains(searchRequestDTO.Keyword.ToLower())))
+                ;
             }
             else
             {
-                companies = await _companyRepository.GetAsync();
+                companies = _companyRepository.GetAsync();
             }
 
             this.FilterEmployeesWithDateOfBirthFrom(ref companies, searchRequestDTO.EmployeeDateOfBirthFrom);
@@ -108,7 +109,7 @@ namespace PumoxWebApplication.Controllers
             return NoContent();
         }
 
-        private void FilterEmployeesWithDateOfBirthFrom(ref IEnumerable<Company> companies, DateTime? date)
+        private void FilterEmployeesWithDateOfBirthFrom(ref IQueryable<Company> companies, DateTime? date)
         {
             if (date != null)
             {
@@ -123,7 +124,7 @@ namespace PumoxWebApplication.Controllers
             }
         }
 
-        private void FilterEmployeesWithDateOfBirthTo(ref IEnumerable<Company> companies, DateTime? date)
+        private void FilterEmployeesWithDateOfBirthTo(ref IQueryable<Company> companies, DateTime? date)
         {
             if (date != null)
             {
@@ -138,7 +139,7 @@ namespace PumoxWebApplication.Controllers
             }
         }
 
-        private void FilterEmployeesJobTitles(ref IEnumerable<Company> companies, IEnumerable<JobTitle> jobTitles)
+        private void FilterEmployeesJobTitles(ref IQueryable<Company> companies, IEnumerable<JobTitle> jobTitles)
         {
             if (jobTitles != null && jobTitles.Any())
             {

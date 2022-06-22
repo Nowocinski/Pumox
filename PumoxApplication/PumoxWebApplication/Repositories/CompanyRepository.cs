@@ -7,10 +7,13 @@ namespace PumoxWebApplication.Repositories
 {
     public class CompanyRepository : ICompanyRepository
     {
-        DataBaseContext _context;
+        // 
+        private readonly DataBaseContext _context;
+        private readonly DbSet<Company> targetDbSet;
         public CompanyRepository(DataBaseContext context)
         {
             _context = context;
+            this.targetDbSet = _context.Set<Company>();
         }
 
         public async Task CreateAsync(Company company)
@@ -18,19 +21,23 @@ namespace PumoxWebApplication.Repositories
             await _context.AddAsync(company);
         }
 
-        public async Task<IEnumerable<Company>> GetAsync(Expression<Func<Company, bool>> filter)
+        public IQueryable<Company> GetAsync(Expression<Func<Company, bool>> filter)
         {
-            return await _context.Companies
+            /*return await _context.Companies
                 .Where(filter)
                 .Include(column => column.Employees)
-                .ToListAsync();
+                .ToListAsync();*/
+            return targetDbSet.
+                Where(filter)
+                .Include(column => column.Employees);
         }
 
-        public async Task<IEnumerable<Company>> GetAsync()
+        public IQueryable<Company> GetAsync()
         {
-            return await _context.Companies
-                .Include(column => column.Employees)
-                .ToListAsync();
+            /*return await _context.Companies
+                .Include(column => column.Employees)*/
+            //.ToListAsync();
+            return targetDbSet;
         }
 
         public async Task<Company> GetSingleAsync(Expression<Func<Company, bool>> filter = null)
