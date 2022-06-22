@@ -7,13 +7,18 @@ namespace PumoxWebApplication.Repositories
 {
     public class CompanyRepository : ICompanyRepository
     {
-        // 
+        // Implementacja dla generycznego repozytorium
+        // https://dotnetfalcon.com/implementing-the-repository-pattern-with-direct-iqueryable-support/
+        // Filtrowanie z użuciem IQueryable
+        // https://youtu.be/6r2S3XhGVl8?t=684
         private readonly DataBaseContext _context;
         private readonly DbSet<Company> targetDbSet;
         public CompanyRepository(DataBaseContext context)
         {
             _context = context;
-            this.targetDbSet = _context.Set<Company>();
+            // Dla generycznego repozytorium z linku
+            // this.targetDbSet = _context.Set<Company>();
+            this.targetDbSet = _context.Companies;
         }
 
         public async Task CreateAsync(Company company)
